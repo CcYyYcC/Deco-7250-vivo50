@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>KoalaSwap — Chat</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            :root {
+                --brand: #f89a3d;
+                --grey-2: #e8e8ec;
+                --text: #17181a;
+                --base-w: 420px;
+                --base-h: 812px;
+                --bar-h: 60px;
+                --toggle-size: 76px;
+                --toggle-col: 96px;
+            }
+            * {
+                box-sizing: border-box;
+            }
+            html,
+            body {
+                height: 100%;
+            }
+            body {
+                margin: 0;
+                font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto,
+                    Arial, sans-serif;
+                color: var(--text);
+                background: #fff;
+            }
+            .stage {
+                height: 100dvh;
+                width: 100vw;
+                display: grid;
+                place-items: start center;
+                background: #fff;
+                overflow: auto;
+            }
+            .phone {
+                width: var(--base-w);
+                height: var(--base-h);
+                background: #fff;
+                border-radius: 28px;
+                box-shadow: 0 22px 64px rgba(0, 0, 0, 0.16);
+                overflow: hidden;
+                display: grid;
+                grid-template-rows: var(--bar-h) 1fr var(--bar-h);
+                transform-origin: top center;
+                will-change: transform;
+            }
+            .appbar {
+                height: var(--bar-h);
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                padding: 0 16px;
+                background: var(--brand);
+                color: #fff;
+            }
+            .logo {
+                width: 36px;
+                height: 36px;
+                border-radius: 999px;
+                object-fit: cover;
+            }
+            .title {
+                font-weight: 800;
+                font-size: 18px;
+            }
+
+            .main {
+                overflow: auto;
+                background: #fff;
+            }
+            .page-title {
+                font-weight: 800;
+                font-size: 26px;
+                margin: 12px 18px 8px;
+            }
+            .list {
+                padding: 0 18px 18px;
+            }
+            .item {
+                display: grid;
+                grid-template-columns: auto 1fr auto;
+                gap: 12px;
+                align-items: center;
+                padding: 12px 0;
+                border-bottom: 1px solid var(--grey-2);
+            }
+            .avatar {
+                width: 46px;
+                height: 46px;
+                border-radius: 999px;
+                background: #5b5e67;
+                display: grid;
+                place-items: center;
+                color: #fff;
+                font-weight: 800;
+                position: relative;
+            }
+            .cap {
+                position: absolute;
+                top: -6px;
+                left: -6px;
+                font-size: 18px;
+            }
+            .dot {
+                position: absolute;
+                top: 2px;
+                right: 2px;
+                width: 10px;
+                height: 10px;
+                border-radius: 999px;
+                background: #ff2c2c;
+            }
+            .meta .name {
+                font-weight: 800;
+            }
+            .meta .line {
+                color: #6e7280;
+            }
+            .meta .time {
+                color: #9aa0ad;
+                font-size: 12px;
+                margin-top: 6px;
+            }
+            .thumb {
+                width: 92px;
+                height: 64px;
+                object-fit: cover;
+                border-radius: 6px;
+            }
+
+            .tabbar {
+                height: var(--bar-h);
+                background: #f3f3f6;
+                border-top: 1px solid var(--grey-2);
+                display: grid;
+                grid-template-columns: 1fr 1fr var(--toggle-col) 1fr 1fr;
+                align-items: center;
+                gap: 4px;
+                padding: 0 8px;
+            }
+            .tab {
+                display: grid;
+                place-items: center;
+                gap: 2px;
+                text-decoration: none;
+                color: #666;
+                font-size: 11px;
+                font-weight: 700;
+            }
+            .tab .ico {
+                width: 26px;
+                height: 26px;
+                object-fit: contain;
+                display: block;
+                opacity: 0.7;
+            }
+            .tab.active {
+                color: var(--brand);
+            }
+            .tab.active .ico {
+                opacity: 1;
+            }
+            .center-cell {
+                display: grid;
+                place-items: center;
+            }
+            .toggle-btn {
+                width: var(--toggle-size);
+                height: var(--toggle-size);
+                border-radius: 999px;
+                background: #fff;
+                border: 6px solid #f3f3f6;
+                display: grid;
+                place-items: center;
+                box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+                transform: translateY(-18px);
+            }
+            .toggle-btn img {
+                width: 60%;
+                height: 60%;
+                object-fit: contain;
+                display: block;
+            }
+
+            @media (max-width: 600px) {
+                .stage {
+                    place-items: stretch;
+                }
+                .phone {
+                    width: 100vw;
+                    height: 100vh;
+                    border-radius: 0;
+                    box-shadow: none;
+                    transform: none;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="stage">
+            <div class="phone" id="phone">
+                <header class="appbar">
+                    <img class="logo" src="assets/logo.png" alt="logo" />
+                    <div class="title"></div>
+                </header>
+
+                <main class="main">
+                    <div class="page-title">Message</div>
+                    <section class="list">
+                        <article class="item">
+                            <div class="avatar">
+                                <span class="cap">🎓</span
+                                ><span class="dot"></span>
+                            </div>
+                            <div class="meta">
+                                <div class="name">John</div>
+                                <div class="line">How much is it?</div>
+                                <div class="time">1 minute ago</div>
+                            </div>
+                            <img
+                                class="thumb"
+                                src="assets/blender.jpg"
+                                alt="Blender"
+                            />
+                        </article>
+
+                        <article class="item">
+                            <div class="avatar">
+                                <span class="cap">🎓</span
+                                ><span class="dot"></span>
+                            </div>
+                            <div class="meta">
+                                <div class="name">Alice</div>
+                                <div class="line">I wanna buy these books.</div>
+                                <div class="time">10 minutes ago</div>
+                            </div>
+                            <img
+                                class="thumb"
+                                src="assets/dsm.jpg"
+                                alt="Books"
+                            />
+                        </article>
+
+                        <article class="item">
+                            <div class="avatar"></div>
+                            <div class="meta">
+                                <div class="name">Tom</div>
+                                <div class="line">Beautiful monitor!</div>
+                                <div class="time">1 hour ago</div>
+                            </div>
+                            <img
+                                class="thumb"
+                                src="assets/monitor.jpg"
+                                alt="Monitor"
+                            />
+                        </article>
+
+                        <article class="item">
+                            <div class="avatar"></div>
+                            <div class="meta">
+                                <div class="name">Miller</div>
+                                <div class="line">
+                                    Could we deal face-to-face?
+                                </div>
+                                <div class="time">1 day ago</div>
+                            </div>
+                            <img
+                                class="thumb"
+                                src="assets/blender.jpg"
+                                alt="Blender"
+                            />
+                        </article>
+                    </section>
+                </main>
+
+                <nav class="tabbar">
+                    <a class="tab" href="home.html">
+                        <img
+                            class="ico"
+                            src="assets/icons/home.png"
+                            alt="Home"
+                        />
+                        <div>Home</div>
+                    </a>
+                    <a class="tab active" href="chat.html">
+                        <img
+                            class="ico"
+                            src="assets/icons/chat.png"
+                            alt="Chat"
+                        />
+                        <div>Chat</div>
+                    </a>
+
+                    <div class="center-cell">
+                        <a class="toggle-btn" href="home_stu.html">
+                            <img
+                                src="assets/icons/toggle-normal.png"
+                                alt="Toggle Normal"
+                            />
+                        </a>
+                    </div>
+
+                    <a class="tab" href="sell.html">
+                        <img
+                            class="ico"
+                            src="assets/icons/sell.png"
+                            alt="Sell"
+                        />
+                        <div>Sell</div>
+                    </a>
+                    <a class="tab" href="profile.html">
+                        <img
+                            class="ico"
+                            src="assets/icons/profile.png"
+                            alt="Profile"
+                        />
+                        <div>Profile</div>
+                    </a>
+                </nav>
+            </div>
+        </div>
+
+        <script>
+            (function () {
+                const phone = document.getElementById("phone");
+                const BASE_H = 812;
+                function applyScale() {
+                    if (window.matchMedia("(max-width:600px)").matches) {
+                        phone.style.transform = "none";
+                        phone.style.marginTop = "0px";
+                        return;
+                    }
+                    const vh =
+                        (window.visualViewport
+                            ? window.visualViewport.height
+                            : window.innerHeight) - 2;
+                    const scale = Math.max(1, vh / BASE_H);
+                    phone.style.transform = `scale(${scale})`;
+                    const scaledH = BASE_H * scale;
+                    phone.style.marginTop = `${Math.max(
+                        0,
+                        (vh - scaledH) / 2
+                    )}px`;
+                }
+                window.addEventListener("load", applyScale);
+                window.addEventListener("resize", applyScale);
+            })();
+        </script>
+    </body>
+</html>
