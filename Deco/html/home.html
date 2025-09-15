@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>KoalaSwap — Home</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            :root {
+                --brand: #f89a3d;
+                --grey-2: #e8e8ec;
+                --text: #17181a;
+
+                /* 设计基准尺寸（手机界面） */
+                --base-w: 420px;
+                --base-h: 812px;
+
+                --bar-h: 60px; /* 顶/底栏高度 */
+                --toggle-size: 76px; /* 中间圆按钮直径 */
+                --toggle-col: 96px; /* 中间列宽度，避免与左右按钮重叠 */
+            }
+            * {
+                box-sizing: border-box;
+            }
+            html,
+            body {
+                height: 100%;
+            }
+            body {
+                margin: 0;
+                font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto,
+                    Arial, sans-serif;
+                color: var(--text);
+                background: #fff;
+            }
+
+            /* 舞台：桌面端等比放大容器 */
+            .stage {
+                height: 100dvh; /* 动态视口高度，避免被浏览器栏影响 */
+                width: 100vw;
+                display: grid;
+                place-items: start center; /* 顶对齐、水平居中，防止下边裁切 */
+                background: #fff;
+                overflow: auto; /* 万一超出，允许滚动（不截断） */
+            }
+
+            /* 手机界面（基于固定设计尺寸） */
+            .phone {
+                width: var(--base-w);
+                height: var(--base-h);
+                background: #fff;
+                border-radius: 28px;
+                box-shadow: 0 22px 64px rgba(0, 0, 0, 0.16);
+                overflow: hidden;
+                display: grid;
+                grid-template-rows: var(--bar-h) 1fr var(--bar-h); /* 头 / 内容 / 尾 */
+                transform-origin: top center; /* 以顶部为基准缩放，避免底部出界 */
+                will-change: transform;
+            }
+
+            /* 顶部 AppBar（橙色固定） */
+            .appbar {
+                height: var(--bar-h);
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                padding: 0 16px;
+                background: var(--brand);
+                color: #fff;
+            }
+            .logo {
+                width: 36px;
+                height: 36px;
+                border-radius: 999px;
+                object-fit: cover;
+            }
+            .title {
+                font-weight: 800;
+                font-size: 18px;
+            }
+
+            /* 内容区（独立滚动） */
+            .main {
+                overflow: auto;
+                background: #fff;
+            }
+            .search {
+                margin: 12px 16px;
+                height: 46px;
+                border: 1px solid var(--grey-2);
+                border-radius: 14px;
+                display: flex;
+                align-items: center;
+                padding: 0 14px;
+                color: #9a9ea9;
+                font-weight: 600;
+                background: #fff;
+            }
+            .section-title {
+                font-weight: 800;
+                font-size: 22px;
+                margin: 16px 16px 8px;
+            }
+            .grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 16px;
+                padding: 0 16px;
+            }
+            .card {
+                cursor: pointer;
+            }
+            .card img {
+                width: 100%;
+                height: 140px;
+                object-fit: cover;
+                border-radius: 8px;
+                background: #eee;
+            }
+            .card .meta {
+                background: #9b9ca3;
+                color: #fff;
+                padding: 8px;
+                font-weight: 700;
+                border-radius: 6px;
+                margin-top: 6px;
+                font-size: 14px;
+            }
+            .chevrons {
+                text-align: center;
+                font-size: 22px;
+                margin: 10px 0;
+                color: #333;
+            }
+
+            /* 底部导航（固定） */
+            .tabbar {
+                height: var(--bar-h);
+                background: #f3f3f6;
+                border-top: 1px solid var(--grey-2);
+                display: grid;
+                grid-template-columns: 1fr 1fr var(--toggle-col) 1fr 1fr; /* 中间独立列 */
+                align-items: center;
+                gap: 4px;
+                padding: 0 8px;
+            }
+            .tab {
+                display: grid;
+                place-items: center;
+                gap: 2px;
+                text-decoration: none;
+                color: #666;
+                font-size: 11px;
+                font-weight: 700;
+            }
+            .tab .ico {
+                width: 26px;
+                height: 26px; /* 底部图标统一大小 */
+                object-fit: contain;
+                display: block;
+                opacity: 0.7;
+            }
+            .tab.active {
+                color: var(--brand);
+            }
+            .tab.active .ico {
+                opacity: 1;
+            }
+
+            /* 中间切换列（仅圆形图片按钮，不要文字） */
+            .center-cell {
+                display: grid;
+                place-items: center;
+            }
+            .toggle-btn {
+                width: var(--toggle-size);
+                height: var(--toggle-size);
+                border-radius: 999px;
+                background: #fff;
+                border: 6px solid #f3f3f6;
+                display: grid;
+                place-items: center;
+                box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+                transform: translateY(-18px); /* 稍微上浮，视觉居中 */
+            }
+            .toggle-btn img {
+                width: 60%;
+                height: 60%;
+                object-fit: contain;
+                display: block;
+            }
+
+            /* —— 移动端下直接铺满屏，不缩放 —— */
+            @media (max-width: 600px) {
+                .stage {
+                    place-items: stretch;
+                }
+                .phone {
+                    width: 100vw;
+                    height: 100vh;
+                    border-radius: 0;
+                    box-shadow: none;
+                    transform: none;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="stage">
+            <div class="phone" id="phone">
+                <!-- 顶部 AppBar（橙色） -->
+                <header class="appbar">
+                    <!-- 左侧 Logo：请放到 assets/logo.png -->
+                    <img
+                        class="logo"
+                        src="assets/logo.png"
+                        alt="KoalaSwap Logo (assets/logo.png)"
+                    />
+                    <div class="title"></div>
+                </header>
+
+                <!-- 内容（上下滚动） -->
+                <main class="main">
+                    <div class="search">Search items...</div>
+
+                    <div class="section-title">Popular in Local</div>
+                    <section class="grid">
+                        <!-- 商品卡片：点击跳 item.html；把图片放到 assets/*.jpg -->
+                        <article
+                            class="card"
+                            onclick="location.href='item.html'"
+                        >
+                            <img
+                                src="assets/airfryer.jpg"
+                                alt="Air fryer (assets/airfryer.jpg)"
+                            />
+                            <div class="meta">Air fryer - 30 AU $</div>
+                        </article>
+                        <article
+                            class="card"
+                            onclick="location.href='item.html'"
+                        >
+                            <img
+                                src="assets/blender.jpg"
+                                alt="Blender (assets/blender.jpg)"
+                            />
+                            <div class="meta">Blender - 15 AU $</div>
+                        </article>
+                        <article
+                            class="card"
+                            onclick="location.href='item.html'"
+                        >
+                            <img
+                                src="assets/dsm.jpg"
+                                alt="DSM-5TR (assets/dsm.jpg)"
+                            />
+                            <div class="meta">DSM-5TR(used) - 35 AU $</div>
+                        </article>
+                        <article
+                            class="card"
+                            onclick="location.href='item.html'"
+                        >
+                            <img
+                                src="assets/ielts.jpg"
+                                alt="IELTS Books (assets/ielts.jpg)"
+                            />
+                            <div class="meta">IELTS Books - 110 AU $</div>
+                        </article>
+                    </section>
+
+                    <div class="chevrons">⌄⌄</div>
+
+                    <div class="section-title">Recently Viewed</div>
+                    <section class="grid">
+                        <article
+                            class="card"
+                            onclick="location.href='item.html'"
+                        >
+                            <img
+                                src="assets/math.jpg"
+                                alt="Cambridge Math (assets/math.jpg)"
+                            />
+                            <div class="meta">Cambridge Math - 100 AU $</div>
+                        </article>
+                        <article
+                            class="card"
+                            onclick="location.href='item.html'"
+                        >
+                            <img
+                                src="assets/monitor.jpg"
+                                alt="Monitor (assets/monitor.jpg)"
+                            />
+                            <div class="meta">Monitor - 180 AU $</div>
+                        </article>
+                    </section>
+                </main>
+
+                <!-- 底部导航：Home / Chat / Switch / Sell / Profile -->
+                <nav class="tabbar" aria-label="bottom navigation">
+                    <a class="tab active" href="home.html" aria-current="page">
+                        <img
+                            class="ico"
+                            src="assets/icons/home.png"
+                            alt="Home (assets/icons/home.png)"
+                        />
+                        <div>Home</div>
+                    </a>
+
+                    <a class="tab" href="chat.html">
+                        <img
+                            class="ico"
+                            src="assets/icons/chat.png"
+                            alt="Chat (assets/icons/chat.png)"
+                        />
+                        <div>Chat</div>
+                    </a>
+
+                    <div class="center-cell">
+                        <a
+                            class="toggle-btn"
+                            href="home_stu.html"
+                            aria-label="Switch to Student"
+                        >
+                            <!-- 中间圆按钮图片（Normal）：assets/icons/toggle-normal.png -->
+                            <img
+                                src="assets/icons/toggle-normal.png"
+                                alt="Toggle Normal (assets/icons/toggle-normal.png)"
+                            />
+                        </a>
+                    </div>
+
+                    <a class="tab" href="sell.html">
+                        <img
+                            class="ico"
+                            src="assets/icons/sell.png"
+                            alt="Sell (assets/icons/sell.png)"
+                        />
+                        <div>Sell</div>
+                    </a>
+
+                    <a class="tab" href="profile.html">
+                        <img
+                            class="ico"
+                            src="assets/icons/profile.png"
+                            alt="Profile (assets/icons/profile.png)"
+                        />
+                        <div>Profile</div>
+                    </a>
+                </nav>
+            </div>
+        </div>
+
+        <script>
+            // ===== 桌面端按“竖向铺满”等比放大，并确保不裁切底部 =====
+            (function () {
+                const phone = document.getElementById("phone");
+                const BASE_H = 812; // 与 --base-h 一致
+                function applyScale() {
+                    // 移动端（<=600px）不缩放
+                    if (window.matchMedia("(max-width: 600px)").matches) {
+                        phone.style.transform = "none";
+                        phone.style.marginTop = "0px";
+                        return;
+                    }
+                    // 取可用高度（优先使用 visualViewport 避免浏览器 UI 干扰），并略减 2px 作为缓冲
+                    const vh =
+                        (window.visualViewport
+                            ? window.visualViewport.height
+                            : window.innerHeight) - 2;
+                    const scale = Math.max(1, vh / BASE_H);
+                    phone.style.transform = `scale(${scale})`;
+                    // 垂直居中：留白均分到上下，防止底部裁切
+                    const scaledH = BASE_H * scale;
+                    const mt = Math.max(0, (vh - scaledH) / 2);
+                    phone.style.marginTop = `${mt}px`;
+                }
+                window.addEventListener("load", applyScale);
+                window.addEventListener("resize", applyScale);
+            })();
+        </script>
+    </body>
+</html>
